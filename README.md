@@ -10,7 +10,7 @@ Download and install [Minibian](https://minibianpi.wordpress.com/). Follow these
 Connect your ethernet cable, start your pi, login (user *root*, password *raspberry*) and update your system.
 
 	apt-get update
-	apt-get -y install sudo nano psmisc fdisk parted
+	apt-get -y install --no-install-recommends sudo nano psmisc parted
 	apt-get -y upgrade
 	apt-get clean
 
@@ -22,8 +22,7 @@ Follow these [instructions](https://www.raspberrypi.org/forums/viewtopic.php?f=5
 
 If you plan to use wireless network install wifi drivers (you can skip this step):
 
-	apt-get update
-	apt-get install -y firmware-ralink firmware-realtek wireless-tools wireless-regdb wpasupplicant iw crda
+	apt-get -y install --no-install-recommends firmware-ralink firmware-realtek wireless-tools wireless-regdb wpasupplicant iw crda
 
 Set `wlan0` by adding these lines to `/etc/network/interfaces`:
 
@@ -51,7 +50,7 @@ Add new user *pi*:
 
 	adduser pi
 
-Add user *pi* to sudoers by executing `visudo` and add these line to end of file:
+Add user *pi* to *sudoers* by executing `visudo` and add these line to end of file:
 
 	pi	ALL=NOPASSWD:	ALL
 
@@ -97,7 +96,7 @@ Enable with:
 
 ## Window manager
 
-	sudo apt-get install -y xinit x11-xserver-utils matchbox unclutter
+	sudo apt-get -y install --no-install-recommends xinit x11-xserver-utils xserver-xorg matchbox unclutter xautomation
 
 ## KWeb browser
 
@@ -109,13 +108,17 @@ Enable with:
 
 ## Set StartX
 
+Add user *pi* to *video* group:
+
+	sudo usermod -aG video pi
+
 Allow *anybody* to run X server:
 
 	sudo dpkg-reconfigure x11-common
 
-Append this line to your `/etc/rc.local`:
+Append this line to your `/home/pi/.profile`:
 
-	su - pi -c 'startx' &
+	[[ -z $DISPLAY && $XDG_VTNR -eq 1 ]] && exec startx
 
 Create `/home/pi/.xinitrc`:
 
@@ -144,6 +147,10 @@ Create `/home/pi/.xinitrc`:
 		kweb3 -KFJHCUA+-zbhrqfpoklgtjeduwxy http://path.to.your/web.page
 	done;
 
+## Optimization
+
+For more info see this [link](http://elinux.org/RPiconfig) (to do).
+
 ## Finally
 
-Reboot your pi and it should start X, launch KWeb browser and be ready with your chosen web-page in kiosk-mode!
+Reboot your pi and it should start X, launch web browser and be ready with your chosen web-page in kiosk-mode!
