@@ -12,6 +12,7 @@ Connect your ethernet cable, start your pi, login (user *root*, password *raspbe
 	apt-get update
 	apt-get -y install --no-install-recommends sudo nano psmisc parted
 	apt-get -y upgrade
+	apt-get -y dist-upgrade
 	apt-get clean
 
 ## Extend root filesystem
@@ -106,6 +107,19 @@ Enable with:
 	cd kweb-1.7.5
 	./debinstall
 
+## CEC
+
+If you wish to control your pi with remote control install CEC client:
+
+	sudo apt-get -y install --no-install-recommends cec-utils
+	cd /tmp
+	git clone https://github.com/fffilo/cec-bind.git
+	chmod +x cec-bind/src/cec-bind.sh
+	sudo mv cec-bind/src/cec-bind.sh /usr/local/bin/cec-bind
+	mv cec-bind/src/config.map ~/.cec-bind
+
+Adjust your `/home/pi/.cec-bind` keymap if necessary (for more info read [this](https://github.com/fffilo/cec-bind)).
+
 ## Set StartX
 
 Add user *pi* to *video* group:
@@ -116,7 +130,7 @@ Allow *anybody* to run X server:
 
 	sudo dpkg-reconfigure x11-common
 
-Append this line to your `/home/pi/.profile`:
+Autostart X by adding this line to your `/home/pi/.profile`:
 
 	[[ -z $DISPLAY && $XDG_VTNR -eq 1 ]] && exec startx
 
@@ -127,10 +141,12 @@ Create `/home/pi/.xinitrc`:
 		echo "Clean up previously running apps"
 		killall -TERM kweb 2>/dev/null;
 		killall -TERM kweb3 2>/dev/null;
+		killall -TERM cec-client 2>/dev/null;
 		killall -TERM matchbox-window-manager 2>/dev/null;
 		sleep 2;
 		killall -9 kweb 2>/dev/null;
 		killall -9 kweb3 2>/dev/null;
+		killall -9 cec-client 2>/dev/null;
 		killall -9 matchbox-window-manager 2>/dev/null;
 
 		echo "Disable DPMS / Screen blanking"
@@ -139,6 +155,9 @@ Create `/home/pi/.xinitrc`:
 
 		echo "Hide the cursor"
 		unclutter -noevents -grab &
+
+		echo "Start CEC client"
+		cec-bind --osd-name="you-kiosk-name" &
 
 		echo "Start the window manager"
 		matchbox-window-manager -use_titlebar no -use_cursor no &
