@@ -156,7 +156,7 @@ Create `/home/pi/.xinitrc`:
 
 	#!/bin/sh
 	while true; do
-		echo "Clean up previously running apps"
+		echo "Gracefully clean up previously running apps"
 		killall -TERM chromium-browser 2>/dev/null;
 		killall -TERM midori 2>/dev/null;
 		killall -TERM iceweasel 2>/dev/null;
@@ -166,6 +166,8 @@ Create `/home/pi/.xinitrc`:
 		killall -TERM cec-client 2>/dev/null;
 		killall -TERM matchbox-window-manager 2>/dev/null;
 		sleep 2;
+
+		echo "Harshly clean up previously running apps"
 		killall -9 chromium-browser 2>/dev/null;
 		killall -9 midori 2>/dev/null;
 		killall -9 iceweasel 2>/dev/null;
@@ -174,6 +176,11 @@ Create `/home/pi/.xinitrc`:
 		killall -9 kweb 2>/dev/null;
 		killall -9 cec-client 2>/dev/null;
 		killall -9 matchbox-window-manager 2>/dev/null;
+
+		echo "Clean out existing profile information"
+		rm -rf ${HOME}/.cache;
+		rm -rf ${HOME}/.config;
+		rm -rf ${HOME}/.pki;
 
 		echo "Disable DPMS / Screen blanking"
 		xset -dpms
