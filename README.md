@@ -99,7 +99,25 @@ Enable with:
 
 	sudo apt-get -y install --no-install-recommends xinit x11-xserver-utils xserver-xorg matchbox unclutter xautomation
 
-## KWeb browser
+## Web browsers
+
+##### Chromium
+
+	sudo apt-get -y install --no-install-recommends chromium-browser
+
+##### IceWeasel
+
+	sudo apt-get -y install --no-install-recommends iceweasel
+
+##### Epiphany Web Browser
+
+	sudo apt-get -y install --no-install-recommends epiphany-browser
+
+##### Midori
+
+	sudo apt-get -y install --no-install-recommends midori
+
+##### Kweb Suite (Minimal Kiosk Browser)
 
 	cd /tmp
 	wget http://steinerdatenbank.de/software/kweb-1.7.5.tar.gz
@@ -139,13 +157,21 @@ Create `/home/pi/.xinitrc`:
 	#!/bin/sh
 	while true; do
 		echo "Clean up previously running apps"
-		killall -TERM kweb 2>/dev/null;
+		killall -TERM chromium-browser 2>/dev/null;
+		killall -TERM midori 2>/dev/null;
+		killall -TERM iceweasel 2>/dev/null;
+		killall -TERM epiphany-browser 2>/dev/null;
 		killall -TERM kweb3 2>/dev/null;
+		killall -TERM kweb 2>/dev/null;
 		killall -TERM cec-client 2>/dev/null;
 		killall -TERM matchbox-window-manager 2>/dev/null;
 		sleep 2;
-		killall -9 kweb 2>/dev/null;
+		killall -9 chromium-browser 2>/dev/null;
+		killall -9 midori 2>/dev/null;
+		killall -9 iceweasel 2>/dev/null;
+		killall -9 epiphany-browser 2>/dev/null;
 		killall -9 kweb3 2>/dev/null;
+		killall -9 kweb 2>/dev/null;
 		killall -9 cec-client 2>/dev/null;
 		killall -9 matchbox-window-manager 2>/dev/null;
 
@@ -162,8 +188,26 @@ Create `/home/pi/.xinitrc`:
 		echo "Start the window manager"
 		matchbox-window-manager -use_titlebar no -use_cursor no &
 
-		echo "Start the browser"
-		kweb3 -KFJHCUA+-zbhrqfpoklgtjeduwxy http://path.to.your/web.page
+		#echo "Start Chromium Browser - chromium-browser"
+		#sed -i 's/"exited_cleanly": false/"exited_cleanly": true/' ${HOME}/.config/chromium Default/Preferences
+		#chromium-browser --noerrdialogs --kiosk "http://path.to.your/web.page" --incognito --disable-translate
+
+		#echo "Start Midori Browser - midori"
+		#midori -e Fullscreen -a "http://path.to.your/web.page"
+
+		#echo "Start IceWeasel Browser - iceweasel"
+		#sleep 15s && xte "key F11" -x:0 &
+		#iceweasel "http://path.to.your/web.page"
+
+		#echo "Start Epiphany Browser - epiphany-browser"
+		#sleep 15s && xte "key F11" -x:0 &
+		#epiphany-browser -a -i --profile ~/.config "http://path.to.your/web.page"
+
+		echo "Start Kweb Suite (Minimal Kiosk Browser) - kweb3"
+		kweb3 -KFJHCUA+-zbhrqfpoklgtjeduwxy "http://path.to.your/web.page"
+
+		#echo "Start Kweb Suite (Minimal Kiosk Browser) - kweb"
+		#kweb -KFJHCUA+-zbhrqfpoklgtjeduwxy "http://path.to.your/web.page"
 	done;
 
 ## Optimization
