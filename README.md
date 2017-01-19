@@ -10,7 +10,7 @@ Download and install [Minibian](https://minibianpi.wordpress.com/). Follow these
 Connect your ethernet cable, start your pi, login (user *root*, password *raspberry*) and update your system.
 
 	apt-get update
-	apt-get -y install --no-install-recommends sudo nano psmisc parted
+	apt-get -y install --no-install-recommends sudo nano bash-completion
 	apt-get -y upgrade
 	apt-get -y dist-upgrade
 	apt-get clean
@@ -58,7 +58,6 @@ Add user *pi* to *sudoers* by executing `visudo` and add these line to end of fi
 Change *root* password:
 
 	passwd
-
 
 ## Locale
 
