@@ -10,7 +10,7 @@ Download and install [Minibian](https://minibianpi.wordpress.com/). Follow these
 Connect your ethernet cable, start your pi, login (user *root*, password *raspberry*) and update your system.
 
 	apt-get update
-	apt-get -y install --no-install-recommends sudo nano bash-completion
+	apt-get -y install --no-install-recommends sudo psmisc bash-completion nano
 	apt-get -y upgrade
 	apt-get -y dist-upgrade
 	apt-get clean
@@ -154,7 +154,17 @@ Autostart X by adding this line to your `/home/pi/.profile`:
 Create `/home/pi/.xinitrc`:
 
 	#!/bin/sh
+
+	# defaults
+	export KIOSK_OSD_NAME="WEB KIOSK"
+	export KIOSK_URL="https://www.google.com"
+
 	while true; do
+		if [ -f ${HOME}/.kiosk ]; then
+			echo "Load config"
+			source ${HOME}/.kiosk
+		fi
+
 		echo "Gracefully clean up previously running apps"
 		killall -TERM chromium-browser 2>/dev/null;
 		killall -TERM midori 2>/dev/null;
@@ -189,32 +199,37 @@ Create `/home/pi/.xinitrc`:
 		unclutter -noevents -grab &
 
 		echo "Start CEC client"
-		cec-bind --osd-name="you-kiosk-name" &
+		cec-bind --osd-name="${KIOSK_OSD_NAME}" &
 
 		echo "Start the window manager"
 		matchbox-window-manager -use_titlebar no -use_cursor no &
 
 		#echo "Start Chromium Browser - chromium-browser"
 		#sed -i 's/"exited_cleanly": false/"exited_cleanly": true/' ${HOME}/.config/chromium Default/Preferences
-		#chromium-browser --noerrdialogs --kiosk "http://path.to.your/web.page" --incognito --disable-translate
+		#chromium-browser --noerrdialogs --kiosk "${KIOSK_URL}" --incognito --disable-translate
 
 		#echo "Start Midori Browser - midori"
-		#midori -e Fullscreen -a "http://path.to.your/web.page"
+		#midori -e Fullscreen -a "${KIOSK_URL}"
 
 		#echo "Start IceWeasel Browser - iceweasel"
 		#sleep 15s && xte "key F11" -x:0 &
-		#iceweasel "http://path.to.your/web.page"
+		#iceweasel "${KIOSK_URL}"
 
 		#echo "Start Epiphany Browser - epiphany-browser"
 		#sleep 15s && xte "key F11" -x:0 &
-		#epiphany-browser -a -i --profile ~/.config "http://path.to.your/web.page"
+		#epiphany-browser -a -i --profile ~/.config "${KIOSK_URL}"
 
 		echo "Start Kweb Suite (Minimal Kiosk Browser) - kweb3"
-		kweb3 -KFJHCUA+-zbhrqfpoklgtjeduwxy "http://path.to.your/web.page"
+		kweb3 -KFJHCUA+-zbhrqfpoklgtjeduwxy "${KIOSK_URL}"
 
 		#echo "Start Kweb Suite (Minimal Kiosk Browser) - kweb"
-		#kweb -KFJHCUA+-zbhrqfpoklgtjeduwxy "http://path.to.your/web.page"
+		#kweb -KFJHCUA+-zbhrqfpoklgtjeduwxy "${KIOSK_URL}"
 	done;
+
+Set kiosk configuration in `/home/pi/.kiosk`:
+
+	export KIOSK_OSD_NAME="WEB KIOSK"
+	export KIOSK_URL="https://www.google.com"
 
 ## Optimization
 
