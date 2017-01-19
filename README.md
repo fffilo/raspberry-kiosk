@@ -162,7 +162,7 @@ Create `/home/pi/.xinitrc`:
 	while true; do
 		if [ -f ${HOME}/.kiosk ]; then
 			echo "Load config"
-			source ${HOME}/.kiosk
+			eval "`cat ${HOME}/.kiosk`"
 		fi
 
 		echo "Gracefully clean up previously running apps"
